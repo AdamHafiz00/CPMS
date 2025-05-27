@@ -140,10 +140,10 @@ public class DoctorGUI extends JFrame {
         // Generate a unique ID for the patient
         try {
             int nextId = doctorManager.getAll().size() + 1;
-            return String.format("A%03d", nextId);
+            return String.format("D%03d", nextId);
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(this, "Error generating patient ID: " + ex.getMessage(), "File Error", JOptionPane.ERROR_MESSAGE);
-            return "A0";
+            return "D0";
         }
     }
 
