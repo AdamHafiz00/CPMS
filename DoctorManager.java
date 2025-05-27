@@ -58,13 +58,14 @@ public class DoctorManager implements PersonOperations<Doctor> {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(",");
-                if (parts.length == 5) {
+                if (parts.length == 6) {
                     int count = Integer.parseInt(parts[0]);
                     String id = parts[1];
                     String name = parts[2];
                     int age = Integer.parseInt(parts[3]);
                     String specialist = parts[4];
-                    doctors.add(new Doctor(count, id, name, age, specialist));
+                    String password = parts[5];
+                    doctors.add(new Doctor(count, id, name, age, specialist,password));
                 }
             }
         }

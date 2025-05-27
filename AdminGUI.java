@@ -13,7 +13,7 @@ import javax.swing.table.DefaultTableModel;
 
 public class AdminGUI extends JFrame{
     
-    private JTextField  txtCount,txtId,txtName,txtAge,txtSearchId, txtUsername;
+    private JTextField  txtCount,txtId,txtName,txtAge,txtSearchId;
     private JPasswordField txtPassword;
     private JTable table;
     private DefaultTableModel tableModel;
@@ -52,9 +52,6 @@ public class AdminGUI extends JFrame{
         JLabel lblAge = new JLabel("Age:");
         txtAge = new JTextField(15);
 
-        JLabel lblUsername = new JLabel("Username:");
-        txtUsername = new JTextField(15);
-
         JLabel lblPassword = new JLabel("Password:");
         txtPassword = new JPasswordField(15);                                       // Creating a password field for password input
 
@@ -74,9 +71,6 @@ public class AdminGUI extends JFrame{
         row++;
         gbc.gridx = 0; gbc.gridy = row; inputPanel.add(lblAge, gbc);
         gbc.gridx = 1; inputPanel.add(txtAge, gbc);
-        row++;
-        gbc.gridx = 0; gbc.gridy = row; inputPanel.add(lblUsername, gbc);
-        gbc.gridx = 1; inputPanel.add(txtUsername, gbc);
         row++;
         gbc.gridx = 0; gbc.gridy = row; inputPanel.add(lblPassword, gbc);
         gbc.gridx = 1; inputPanel.add(txtPassword, gbc);
@@ -99,7 +93,7 @@ public class AdminGUI extends JFrame{
         buttonPanel.add(btnRefresh);
         buttonPanel.add(btnBack);
 
-        tableModel = new DefaultTableModel(new String[]{"Count", "ID", "Name", "Age", "Username","Password"}, 0) { // Creating a table model with column names
+        tableModel = new DefaultTableModel(new String[]{"Count", "ID", "Name", "Age","Password"}, 0) { // Creating a table model with column names
             public boolean isCellEditable(int row, int column) {                                                   // Making the table cells non-editable
                 return false;
             }
@@ -131,8 +125,8 @@ public class AdminGUI extends JFrame{
                     txtId.setText(tableModel.getValueAt(row, 1).toString());        
                     txtName.setText(tableModel.getValueAt(row, 2).toString());
                     txtAge.setText(tableModel.getValueAt(row, 3).toString());
-                    txtUsername.setText(tableModel.getValueAt(row, 4).toString());
-                    txtPassword.setText(tableModel.getValueAt(row, 5).toString());
+                    txtPassword.setText(tableModel.getValueAt(row, 4).toString());
+                  
                     
                 }
             }
@@ -182,16 +176,15 @@ public class AdminGUI extends JFrame{
             String id = generateId(count);
             String name = txtName.getText().trim();
             String ageText = txtAge.getText().trim();
-            String username = txtUsername.getText().trim();
             String password = new String(txtPassword.getPassword()).trim();
 
-            if (name.isEmpty() || ageText.isEmpty() || username.isEmpty() || password.isEmpty()) {
+            if (name.isEmpty() || ageText.isEmpty() || password.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "All fields are required.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
             int age = Integer.parseInt(ageText);                                    // converting to int for passing to arg Admin Constructor
-            Admin admin = new Admin(count, id, name, age, username, password);      // Creating Admin object and passing the data to the constructor and assigning to the admin variable
+            Admin admin = new Admin(count, id, name, age, password);      // Creating Admin object and passing the data to the constructor and assigning to the admin variable
             adminManager.add(admin);                                                // Adding the admin object to the file using the add method from AdminManager class
 
             JOptionPane.showMessageDialog(this, "Admin added successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
@@ -207,10 +200,9 @@ public class AdminGUI extends JFrame{
             String id = txtId.getText().trim();                              
             String name = txtName.getText().trim();
             int age = Integer.parseInt(txtAge.getText().trim());
-            String username = txtUsername.getText().trim();
             String password = new String(txtPassword.getPassword()).trim();
 
-            Admin admin = new Admin(count, id, name, age, username,password);
+            Admin admin = new Admin(count, id, name, age,password);
             adminManager.update(admin);
             JOptionPane.showMessageDialog(this, "Admin updated.");
             clearFields();                                                      // Clearing the text fields after updating
@@ -246,7 +238,7 @@ public class AdminGUI extends JFrame{
                 txtId.setText(admin.getId());
                 txtName.setText(admin.getName());
                 txtAge.setText(String.valueOf(admin.getAge()));
-                txtUsername.setText(admin.getUsername());
+
                 txtPassword.setText(admin.getPassword());
             }
         } catch (IOException ex) {
@@ -259,7 +251,7 @@ public class AdminGUI extends JFrame{
             tableModel.setRowCount(0);                                     // Clearing the table model before adding new data   
             for (Admin d : admin) {                                                 // Iterating through the list of admins
                 tableModel.addRow(new Object[]{                                     // Adding a new row to the table model with the admin data
-                        d.getCount(), d.getId(), d.getName(), d.getAge(), d.getUsername(), d.getPassword()
+                        d.getCount(), d.getId(), d.getName(), d.getAge(), d.getPassword()
                 });
             }
         } catch (IOException ex) {
@@ -272,7 +264,6 @@ public class AdminGUI extends JFrame{
         txtId.setText("");
         txtName.setText("");
         txtAge.setText("");
-        txtUsername.setText("");
         txtPassword.setText("");
         txtSearchId.setText("");
     }

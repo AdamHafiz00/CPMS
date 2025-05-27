@@ -8,6 +8,7 @@ import javax.swing.table.DefaultTableModel;
 
 public class DoctorGUI extends JFrame {
     private JTextField txtCount, txtId, txtName, txtAge, txtSearchId;
+    private JPasswordField txtPassword;
     private JComboBox<String> cmbSpecialist;
     private JTable table;
     private DefaultTableModel tableModel;
@@ -40,6 +41,10 @@ public class DoctorGUI extends JFrame {
         txtId = new JTextField();
         txtId.setEditable(false);
 
+        JLabel lblPassword = new JLabel("Password:");
+        txtPassword = new JPasswordField(); 
+        
+
         JLabel lblName = new JLabel("Name:");
         txtName = new JTextField();
 
@@ -69,6 +74,9 @@ public class DoctorGUI extends JFrame {
         gbc.gridx = 0; gbc.gridy = row; inputPanel.add(lblSpecialist, gbc);
         gbc.gridx = 1; inputPanel.add(cmbSpecialist, gbc);
         row++;
+        gbc.gridx = 0; gbc.gridy = row; inputPanel.add(lblPassword, gbc);
+        gbc.gridx = 1; inputPanel.add(txtPassword, gbc);
+        row++;
         gbc.gridx = 0; gbc.gridy = row; inputPanel.add(lblSearchId, gbc);
         gbc.gridx = 1; inputPanel.add(txtSearchId, gbc);
 
@@ -87,7 +95,7 @@ public class DoctorGUI extends JFrame {
         buttonPanel.add(btnRefresh);
         buttonPanel.add(btnBack);
 
-        tableModel = new DefaultTableModel(new String[]{"Count", "ID", "Name", "Age", "Specialist"}, 0) {
+        tableModel = new DefaultTableModel(new String[]{"Count", "ID", "Name", "Age", "Specialist","Password"}, 0) {
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
@@ -119,6 +127,7 @@ public class DoctorGUI extends JFrame {
                     txtName.setText(tableModel.getValueAt(row, 2).toString());
                     txtAge.setText(tableModel.getValueAt(row, 3).toString());
                     cmbSpecialist.setSelectedItem(tableModel.getValueAt(row, 4).toString());
+                    txtPassword.setText(tableModel.getValueAt(row, 5).toString()); 
                 }
             }
         });
@@ -153,6 +162,7 @@ public class DoctorGUI extends JFrame {
             String name = txtName.getText().trim();
             String ageText = txtAge.getText().trim();
             String specialist = (String) cmbSpecialist.getSelectedItem();
+            String password = new String(txtPassword.getPassword()).trim(); // Get password from JPasswordField
 
             if (ageText.isEmpty() || name.isEmpty() || specialist.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "ID, Name and Specialist cannot be empty.");
@@ -160,7 +170,7 @@ public class DoctorGUI extends JFrame {
             }
             int age = Integer.parseInt(ageText); //converting to int for passing to arg Doctor Constructor
 
-            Doctor doctor = new Doctor(count, id, name, age, specialist);
+            Doctor doctor = new Doctor(count, id, name, age, specialist,password);
             doctorManager.add(doctor);
             JOptionPane.showMessageDialog(this, "Doctor added.");
             clearFields();
@@ -177,8 +187,9 @@ public class DoctorGUI extends JFrame {
             String name = txtName.getText().trim();
             int age = Integer.parseInt(txtAge.getText().trim());
             String specialist = (String) cmbSpecialist.getSelectedItem();
+            String password = new String(txtPassword.getPassword()).trim(); // Get password from JPasswordField
 
-            Doctor doctor = new Doctor(count, id, name, age, specialist);
+            Doctor doctor = new Doctor(count, id, name, age, specialist,password);
             doctorManager.update(doctor);
             JOptionPane.showMessageDialog(this, "Doctor updated.");
             clearFields();
@@ -228,7 +239,7 @@ public class DoctorGUI extends JFrame {
             tableModel.setRowCount(0);
             for (Doctor d : doctors) {
                 tableModel.addRow(new Object[]{
-                        d.getCount(), d.getId(), d.getName(), d.getAge(), d.getSpecialist()
+                        d.getCount(), d.getId(), d.getName(), d.getAge(), d.getSpecialist(), d.getPassword()
                 });
             }
         } catch (IOException ex) {
@@ -243,6 +254,7 @@ public class DoctorGUI extends JFrame {
         txtAge.setText("");
         cmbSpecialist.setSelectedIndex(0);
         txtSearchId.setText("");
+        txtPassword.setText(""); 
     }
 
     public static void main(String[] args) {

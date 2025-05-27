@@ -25,7 +25,7 @@ public class PatientGUI extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         cmbDoctor = new JComboBox<>();
-        cmbStatus = new JComboBox<>(new String[] {"Pending", "Appointment Scheduled", "Completed"});
+        cmbStatus = new JComboBox<>(new String[] {"New Patient", "Appointment Scheduled", "Completed"});
 
         // Panel for input fields
         JPanel inputPanel = new JPanel(new GridLayout(8, 2, 5, 5));

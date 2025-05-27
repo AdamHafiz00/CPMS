@@ -2,9 +2,8 @@
 public class Admin extends Person{
     private String username;
     private String password;
-    public Admin(int count, String id,String name, int age, String username,String password) {
+    public Admin(int count, String id,String name, int age, String password) {
         super(count,id, name, age);    // Call the constructor of the superclass Person
-        this.username = username;
         this.password = password;
     }
     
