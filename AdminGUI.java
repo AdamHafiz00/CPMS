@@ -146,8 +146,20 @@ public class AdminGUI extends JFrame{
 
     private String generateId() {
         // Generate a unique ID for the patient
-        try {
-            int nextId = adminManager.getAll().size() + 1;
+              try {
+            int maxId = 0;
+            for (Admin a : adminManager.getAll()) { // Get all patients and find the max ID
+                String a_id = a.getId();
+                if (a_id != null && a_id.startsWith("A")) { //a_id is not null and starts with "A"
+                    try {
+                        int num = Integer.parseInt(a_id.substring(1)); //SUBSTRING IS REMOVING THE "A" FROM THE ID AND CONVERTING TO INT, TO FIND THE MAX ID
+                        if (num > maxId) {
+                            maxId = num;
+                        }
+                    } catch (NumberFormatException ignore) {}
+                }
+            }
+            int nextId = maxId + 1; // Increment the max ID to get the next ID
             return String.format("A%03d", nextId);
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(this, "Error generating patient ID: " + ex.getMessage(), "File Error", JOptionPane.ERROR_MESSAGE);

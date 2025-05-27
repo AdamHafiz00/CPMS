@@ -1,4 +1,5 @@
 P001,ADAM,19,HEADACHE,SHAHRIMAN,Appointment Scheduled
 P004,CHARLIE,25,DIABETES,HAFIZ,Completed
 P005,EMMA,28,ASTHMA,HAFIZ,Appointment Scheduled
-P006,OLIVER,35,FLU,AZMAN,Appointment Scheduled
+P007,muiz,12,demam,SHAHRIMAN,New Patient
+P008,SHUKRI,21,SAKIT KEPALA,SHAHRIMAN,Appointment Scheduled

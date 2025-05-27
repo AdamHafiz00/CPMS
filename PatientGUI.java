@@ -148,7 +148,19 @@ public class PatientGUI extends JFrame {
     private String generateId() {
         // Generate a unique ID for the patient
               try {
-            int nextId = patientManager.getAll().size() + 1;
+            int maxId = 0;
+            for (Patient p : patientManager.getAll()) { // Get all patients and find the max ID
+                String pid = p.getId();
+                if (pid != null && pid.startsWith("P")) {
+                    try {
+                        int num = Integer.parseInt(pid.substring(1)); //SUBSTRING IS REMOVING THE "P" FROM THE ID AND CONVERTING TO INT, TO FIND THE MAX ID
+                        if (num > maxId) {
+                            maxId = num;
+                        }
+                    } catch (NumberFormatException ignore) {}
+                }
+            }
+            int nextId = maxId + 1; // Increment the max ID to get the next ID
             return String.format("P%03d", nextId);
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(this, "Error generating patient ID: " + ex.getMessage(), "File Error", JOptionPane.ERROR_MESSAGE);
