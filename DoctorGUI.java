@@ -1,0 +1,253 @@
+import java.awt.*;
+import java.awt.event.*;
+import java.io.IOException;
+import java.util.List;
+import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableModel;
+
+public class DoctorGUI extends JFrame {
+    private JTextField txtCount, txtId, txtName, txtAge, txtSearchId;
+    private JComboBox<String> cmbSpecialist;
+    private JTable table;
+    private DefaultTableModel tableModel;
+    private DoctorManager doctorManager;
+
+    public DoctorGUI() {
+        doctorManager = new DoctorManager();
+        initComponents();
+        loadTableData();
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setLocationRelativeTo(null);
+    }
+
+    private void initComponents() {
+        setTitle("Doctor Management System");
+        setSize(800, 600);
+        setLayout(new BorderLayout(10, 10));
+
+        JPanel inputPanel = new JPanel(new GridBagLayout());
+        inputPanel.setBorder(new TitledBorder("Doctor Details"));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        JLabel lblCount = new JLabel("Count:");
+        txtCount = new JTextField();
+        txtCount.setEditable(false);
+
+        JLabel lblId = new JLabel("ID:");
+        txtId = new JTextField();
+        txtId.setEditable(false);
+
+        JLabel lblName = new JLabel("Name:");
+        txtName = new JTextField();
+
+        JLabel lblAge = new JLabel("Age:");
+        txtAge = new JTextField();
+
+        JLabel lblSpecialist = new JLabel("Specialist:");
+        String[] specialists = {"Cardiology", "Neurology", "Orthopedics", "Pediatrics", "General"};
+        cmbSpecialist = new JComboBox<>(specialists);
+
+        JLabel lblSearchId = new JLabel("Search by ID:");
+        txtSearchId = new JTextField();
+
+        int row = 0;
+        gbc.gridx = 0; gbc.gridy = row; inputPanel.add(lblCount, gbc);
+        gbc.gridx = 1; inputPanel.add(txtCount, gbc);
+        row++;
+        gbc.gridx = 0; gbc.gridy = row; inputPanel.add(lblId, gbc);
+        gbc.gridx = 1; inputPanel.add(txtId, gbc);
+        row++;
+        gbc.gridx = 0; gbc.gridy = row; inputPanel.add(lblName, gbc);
+        gbc.gridx = 1; inputPanel.add(txtName, gbc);
+        row++;
+        gbc.gridx = 0; gbc.gridy = row; inputPanel.add(lblAge, gbc);
+        gbc.gridx = 1; inputPanel.add(txtAge, gbc);
+        row++;
+        gbc.gridx = 0; gbc.gridy = row; inputPanel.add(lblSpecialist, gbc);
+        gbc.gridx = 1; inputPanel.add(cmbSpecialist, gbc);
+        row++;
+        gbc.gridx = 0; gbc.gridy = row; inputPanel.add(lblSearchId, gbc);
+        gbc.gridx = 1; inputPanel.add(txtSearchId, gbc);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+        JButton btnAdd = new JButton("Add");
+        JButton btnUpdate = new JButton("Update");
+        JButton btnDelete = new JButton("Delete");
+        JButton btnSearch = new JButton("Search");
+        JButton btnRefresh = new JButton("Refresh");
+        JButton btnBack = new JButton("Back to Main Menu");
+
+        buttonPanel.add(btnAdd);
+        buttonPanel.add(btnUpdate);
+        buttonPanel.add(btnDelete);
+        buttonPanel.add(btnSearch);
+        buttonPanel.add(btnRefresh);
+        buttonPanel.add(btnBack);
+
+        tableModel = new DefaultTableModel(new String[]{"Count", "ID", "Name", "Age", "Specialist"}, 0) {
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        table = new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.setBorder(new TitledBorder("Doctor Records"));
+
+        add(inputPanel, BorderLayout.NORTH);
+        add(buttonPanel, BorderLayout.CENTER);
+        add(scrollPane, BorderLayout.SOUTH);
+
+        btnAdd.addActionListener(e -> addDoctor());
+        btnUpdate.addActionListener(e -> updateDoctor());
+        btnDelete.addActionListener(e -> deleteDoctor());
+        btnSearch.addActionListener(e -> searchDoctor());
+        btnRefresh.addActionListener(e -> loadTableData());
+        btnBack.addActionListener(e -> {
+            dispose();
+            new AdminMainMenu();
+        });
+
+        table.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                int row = table.getSelectedRow();
+                if (row >= 0) {
+                    txtCount.setText(tableModel.getValueAt(row, 0).toString());
+                    txtId.setText(tableModel.getValueAt(row, 1).toString());
+                    txtName.setText(tableModel.getValueAt(row, 2).toString());
+                    txtAge.setText(tableModel.getValueAt(row, 3).toString());
+                    cmbSpecialist.setSelectedItem(tableModel.getValueAt(row, 4).toString());
+                }
+            }
+        });
+        pack();                  // Auto-resize based on content
+        setResizable(true);      // Allow user to resize
+        setLocationRelativeTo(null); 
+    }
+    private int getNextCount() {
+        try {
+            List<Doctor> doctors = doctorManager.getAll();
+            int maxCount = 0;
+            for (Doctor d : doctors) {
+                if (d.getCount() > maxCount) {
+                    maxCount = d.getCount();
+                }
+            }
+            return maxCount + 1;
+        } catch (IOException ex) {
+            return 1; // start from 1 if error or empty list
+        }
+    }
+
+    private String generateId(int count) {
+        return String.format("D%03d", count); // e.g., D001, D012, D123
+    }
+
+
+    private void addDoctor() {
+        try {
+            int count = getNextCount();
+            String id = generateId(count);  
+            String name = txtName.getText().trim();
+            String ageText = txtAge.getText().trim();
+            String specialist = (String) cmbSpecialist.getSelectedItem();
+
+            if (ageText.isEmpty() || name.isEmpty() || specialist.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "ID, Name and Specialist cannot be empty.");
+                return;
+            }
+            int age = Integer.parseInt(ageText); //converting to int for passing to arg Doctor Constructor
+
+            Doctor doctor = new Doctor(count, id, name, age, specialist);
+            doctorManager.add(doctor);
+            JOptionPane.showMessageDialog(this, "Doctor added.");
+            clearFields();
+            loadTableData();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
+        }
+    }
+
+    private void updateDoctor() {
+        try {
+            int count = Integer.parseInt(txtCount.getText().trim());
+            String id = txtId.getText().trim();
+            String name = txtName.getText().trim();
+            int age = Integer.parseInt(txtAge.getText().trim());
+            String specialist = (String) cmbSpecialist.getSelectedItem();
+
+            Doctor doctor = new Doctor(count, id, name, age, specialist);
+            doctorManager.update(doctor);
+            JOptionPane.showMessageDialog(this, "Doctor updated.");
+            clearFields();
+            loadTableData();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
+        }
+    }
+
+    private void deleteDoctor() {
+        String id = txtId.getText().trim();
+        if (id.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Enter ID to delete.");
+            return;
+        }
+        try {
+            doctorManager.delete(id);
+            JOptionPane.showMessageDialog(this, "Doctor deleted.");
+            clearFields();
+            loadTableData();
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
+        }
+    }
+
+    private void searchDoctor() {
+        String id = txtSearchId.getText().trim();
+        try {
+            Doctor doctor = doctorManager.searchById(id);
+            if (doctor == null) {
+                JOptionPane.showMessageDialog(this, "Doctor not found.");
+            } else {
+                txtCount.setText(String.valueOf(doctor.getCount()));
+                txtId.setText(doctor.getId());
+                txtName.setText(doctor.getName());
+                txtAge.setText(String.valueOf(doctor.getAge()));
+                cmbSpecialist.setSelectedItem(doctor.getSpecialist());
+            }
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
+        }
+    }
+
+    private void loadTableData() {
+        try {
+            List<Doctor> doctors = doctorManager.getAll();
+            tableModel.setRowCount(0);
+            for (Doctor d : doctors) {
+                tableModel.addRow(new Object[]{
+                        d.getCount(), d.getId(), d.getName(), d.getAge(), d.getSpecialist()
+                });
+            }
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
+        }
+    }
+
+    private void clearFields() {
+        txtCount.setText("");
+        txtId.setText("");
+        txtName.setText("");
+        txtAge.setText("");
+        cmbSpecialist.setSelectedIndex(0);
+        txtSearchId.setText("");
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            new DoctorGUI().setVisible(true);
+        });
+    }
+}
