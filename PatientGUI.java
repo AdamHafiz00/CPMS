@@ -13,7 +13,10 @@ public class PatientGUI extends JFrame {
     private PatientManager patientManager;
     private JComboBox<String> cmbDoctor;
     private JComboBox<String> cmbStatus;
-    public PatientGUI() {
+    private String UserId; // Store the level as a field
+
+    public PatientGUI(String UserId) {
+        this.UserId = UserId; // Assign constructor parameter to field
         patientManager = new PatientManager();
         initComponents();
         loadTableData();
@@ -105,7 +108,7 @@ public class PatientGUI extends JFrame {
         btnRefresh.addActionListener(e -> loadTableData());
         btnBack.addActionListener(e -> {
             dispose();
-            new AdminMainMenu();
+            new AdminMainMenu(this.UserId);
         });
 
         // When table row clicked, populate input fields
@@ -151,7 +154,7 @@ public class PatientGUI extends JFrame {
             int maxId = 0;
             for (Patient p : patientManager.getAll()) { // Get all patients and find the max ID
                 String pid = p.getId();
-                if (pid != null && pid.startsWith("P")) {
+                if (pid != null && pid.startsWith("P")) { //pid is not null and starts with "P"
                     try {
                         int num = Integer.parseInt(pid.substring(1)); //SUBSTRING IS REMOVING THE "P" FROM THE ID AND CONVERTING TO INT, TO FIND THE MAX ID
                         if (num > maxId) {
@@ -286,8 +289,6 @@ public class PatientGUI extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            new PatientGUI().setVisible(true);
-        });
-    }
+      
+}
 }

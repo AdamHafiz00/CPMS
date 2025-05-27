@@ -13,8 +13,9 @@ public class DoctorGUI extends JFrame {
     private JTable table;
     private DefaultTableModel tableModel;
     private DoctorManager doctorManager;
-
-    public DoctorGUI() {
+    private String UserId; // Variable to store user type (Admin or Doctor)
+    public DoctorGUI(String UserId) {
+        this.UserId = UserId; // Store the user level
         doctorManager = new DoctorManager();
         initComponents();
         loadTableData();
@@ -115,7 +116,7 @@ public class DoctorGUI extends JFrame {
         btnRefresh.addActionListener(e -> loadTableData());
         btnBack.addActionListener(e -> {
             dispose();
-            new AdminMainMenu();
+            new AdminMainMenu(this.UserId);
         });
 
         table.addMouseListener(new MouseAdapter() {
@@ -186,7 +187,7 @@ public class DoctorGUI extends JFrame {
 
     private void updateDoctor() {
         try {
-            int count = Integer.parseInt(txtCount.getText().trim());
+           
             String id = txtId.getText().trim();
             String name = txtName.getText().trim();
             int age = Integer.parseInt(txtAge.getText().trim());
@@ -261,8 +262,7 @@ public class DoctorGUI extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            new DoctorGUI().setVisible(true);
-        });
+
+       
     }
 }

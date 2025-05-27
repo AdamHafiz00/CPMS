@@ -5,7 +5,7 @@ class SigninGUI extends javax.swing.JFrame {
     private javax.swing.JTextField userid;
     private javax.swing.JLabel passwordLabel;
     private javax.swing.JPasswordField passwordField;
-    public String usercode; // Variable to store user type (Admin or Doctor)
+    public String usercode,level; // Variable to store user type (Admin or Doctor)
     public SigninGUI() {
         initComponents();
     }
@@ -45,12 +45,13 @@ class SigninGUI extends javax.swing.JFrame {
                     String line;                                                                                                    // Initialize a variable to hold each line read from the file
                     while ((line = br.readLine()) != null) {                                                                        // Read each line until the end of the file
                         String[] parts = line.split(",");                                                                     // Split the line into parts using comma as a delimiter
-                        if (parts.length == 4) {                                                                                    // Check if the line has the expected number of parts                   
+                        if (parts.length == 5) {                                                                                    // Check if the line has the expected number of parts                   
                             String fileUserid = parts[0];                                                                         // Get the username from the file
                             String filePassword = parts[3];                                                                         // Get the password from the file                
                             if (UserId.equals(fileUserid) && password.equals(filePassword)) {                                   // Compare the input username and password with the file data
                                 authenticated = true; 
-                                usercode = "Admin";                                                                              // If they match, set authenticated to true                    
+                                usercode = "Admin";
+                                                                                                                                     // If they match, set authenticated to true                    
                                 break;                                                                                              // Exit the loop as we found a match                            
                             }
                         }
@@ -82,7 +83,9 @@ class SigninGUI extends javax.swing.JFrame {
                         patientStatusGUI.setVisible(true); // Pass the user ID to PatientStatusGUI
                         dispose();
                     } else if (usercode.equals("Admin")) {
-                        new AdminMainMenu();
+                        AdminMainMenu adminMainMenu = new AdminMainMenu(UserId); // Pass the level to AdminMainMenu
+                        adminMainMenu.setVisible(true); // Make the AdminMainMenu visible
+                        
                         dispose();
                     }
                    

@@ -2,7 +2,7 @@ import javax.swing.*;
 
 public class AdminMainMenu extends JFrame {
 
-    public AdminMainMenu() {
+    public AdminMainMenu(String UserId) {
         super("Admin Control Panel");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(400, 200);
@@ -18,26 +18,47 @@ public class AdminMainMenu extends JFrame {
 
         patientMenuItem.addActionListener(e -> {
             dispose();
-            new PatientGUI().setVisible(true);
+            new PatientGUI(UserId).setVisible(true);
         });
         doctorMenuItem.addActionListener(e -> {
             dispose();
-            new DoctorGUI().setVisible(true);
+            new DoctorGUI(UserId).setVisible(true);
         });
         adminMenuItem.addActionListener(e -> {
             dispose();
-            new AdminGUI().setVisible(true);
+            new AdminGUI(UserId).setVisible(true);
         });
 
+         
 
         manageMenu.add(patientMenuItem);
         manageMenu.add(doctorMenuItem);
+
+        AdminManager adminManager = new AdminManager();
+        String level,UserName = "";
+        try {   
+            Admin admin = adminManager.searchById(UserId);
+            level = admin.getLevel();
+            UserName = admin.getName(); // Get the name of the admin
+             // Get the level of the admin
+        } catch (java.io.IOException ex) {
+            JOptionPane.showMessageDialog(this, "Error loading admin data: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            level = "";
+        }
+
+        if (level.equals("1")) { // Assuming level "1" is for SuperAdmin
+            adminMenuItem.setEnabled(true);
+            doctorMenuItem.setEnabled(true);
+        } else {
+            adminMenuItem.setEnabled(false);
+            doctorMenuItem.setEnabled(false);
+        }   
         manageMenu.add(adminMenuItem);
 
         menuBar.add(manageMenu);
         setJMenuBar(menuBar);
 
-        JLabel welcome = new JLabel("Welcome Admin! Use the menu to manage records.", JLabel.CENTER);
+        JLabel welcome = new JLabel("Welcome "+ UserName +" Use the menu to manage records.", JLabel.CENTER);
         add(welcome);
 
         // Add Sign Out menu to the menu bar on the right
@@ -60,6 +81,6 @@ public class AdminMainMenu extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(AdminMainMenu::new);
+    
     }
 }

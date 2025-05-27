@@ -18,14 +18,17 @@ public class AdminGUI extends JFrame{
     private JTable table;
     private DefaultTableModel tableModel;
     private AdminManager adminManager;
-
-    public AdminGUI() {
+    private String UserId;
+    public AdminGUI(String UserId) {
+        this.UserId = UserId; // Assign constructor parameter to field
         adminManager = new AdminManager();
         initComponents();
         loadTableData();
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
     }
+
+
 
     public void initComponents() {
         setTitle("Admin Management System");
@@ -88,7 +91,7 @@ public class AdminGUI extends JFrame{
         buttonPanel.add(btnRefresh);
         buttonPanel.add(btnBack);
 
-        tableModel = new DefaultTableModel(new String[]{"No.", "ID", "Name", "Age","Password"}, 0) { // Creating a table model with column names
+        tableModel = new DefaultTableModel(new String[]{"No.", "ID", "Name", "Age","Password","level"}, 0) { // Creating a table model with column names
             public boolean isCellEditable(int row, int column) {                                                   // Making the table cells non-editable
                 return false;
             }
@@ -109,7 +112,7 @@ public class AdminGUI extends JFrame{
         btnRefresh.addActionListener(e -> loadTableData());                             // Adding action listener for the Refresh button to call loadTableData method
         btnBack.addActionListener(e -> {
             dispose();                                                                  // Dispose of the current window
-            new AdminMainMenu();                                                        // Open the AdminMainMenu                           
+            new AdminMainMenu(this.UserId);                                                 // Open the AdminMainMenu with a String argument
         });
 
         table.addMouseListener(new MouseAdapter() {                                     // Adding a mouse listener to the table to handle row selection
@@ -128,19 +131,9 @@ public class AdminGUI extends JFrame{
         });
 
 
-
-
-
-
-
-
-
         pack();                               // Auto-resize based on content
         setResizable(true);         // Allow user to resize
         setLocationRelativeTo(null);        // Center the window on the screen
-
-
-
 
     }
 
@@ -182,7 +175,7 @@ public class AdminGUI extends JFrame{
             }
 
             int age = Integer.parseInt(ageText);                                    // converting to int for passing to arg Admin Constructor
-            Admin admin = new Admin( id, name, age, password);      // Creating Admin object and passing the data to the constructor and assigning to the admin variable
+            Admin admin = new Admin( id, name, age, password,"0");      // Creating Admin object and passing the data to the constructor and assigning to the admin variable
             adminManager.add(admin);                                                // Adding the admin object to the file using the add method from AdminManager class
 
             JOptionPane.showMessageDialog(this, "Admin added successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
@@ -200,7 +193,7 @@ public class AdminGUI extends JFrame{
             int age = Integer.parseInt(txtAge.getText().trim());
             String password = new String(txtPassword.getPassword()).trim();
 
-            Admin admin = new Admin(id, name, age,password);
+            Admin admin = new Admin(id, name, age,password,"0");
             adminManager.update(admin);
             JOptionPane.showMessageDialog(this, "Admin updated.");
             clearFields();                                                      // Clearing the text fields after updating
@@ -248,7 +241,7 @@ public class AdminGUI extends JFrame{
             tableModel.setRowCount(0);                                     // Clearing the table model before adding new data   
             for (Admin d : admin) {                                                 // Iterating through the list of admins
                 tableModel.addRow(new Object[]{                                     // Adding a new row to the table model with the admin data
-                        tableModel.getRowCount(), d.getId(), d.getName(), d.getAge(), d.getPassword()
+                        tableModel.getRowCount(), d.getId(), d.getName(), d.getAge(), d.getPassword(),d.getLevel()
                 });
             }
         } catch (IOException ex) {
@@ -267,7 +260,7 @@ public class AdminGUI extends JFrame{
 
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new AdminGUI().setVisible(true));    // Launch the Admin GUI
+        
         
     }
 

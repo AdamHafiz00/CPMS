@@ -63,14 +63,15 @@ public class AdminManager implements PersonOperations<Admin>{
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(",");
-                if (parts.length == 4) {
+                if (parts.length == 5) {
                     String id = parts[0];
                     String name = parts[1];
                     int age = Integer.parseInt(parts[2]);
                     String password = parts[3];
+                    String level = parts[4]; // Assuming level is always "Admin" for this class
            
                     
-                    admin.add(new Admin( id, name, age, password));
+                    admin.add(new Admin( id, name, age, password,level));
                 }
             }
             
