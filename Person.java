@@ -3,21 +3,19 @@ public abstract class Person {
     private String id;
     private String name;
     private int age;
-    private int count;
+   
 
-    public Person(int count, String id, String name, int age){
+    public Person(String id, String name, int age){
         this.id = id;
         this.name = name;
         this.age = age;
-        this.count = count;
+       
 
     }
     //encapsulation: getter and setter
     
     //getter
-    public int getCount(){
-        return count;
-    }
+
     public String getId(){
         return id;
     }
@@ -30,10 +28,7 @@ public abstract class Person {
     }
 
     //setter
-    public void setCount(int count){
-        this.count = count;
 
-    }
     public void setId(String id){
         this.id = id;
     

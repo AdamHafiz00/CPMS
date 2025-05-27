@@ -6,7 +6,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 public class PatientStatusGUI extends JFrame {
-    private JTextField txtCount, txtId, txtName, txtAge, txtDiseases, txtSearchId;
+    private JTextField txtId, txtName, txtAge, txtDiseases, txtSearchId;
     
     private JTable table;
     private DefaultTableModel tableModel;
@@ -22,21 +22,16 @@ public class PatientStatusGUI extends JFrame {
     }
 
     private void initComponents() {
-        setTitle("Patient Manager");
+        setTitle("Patient Status Management");
         setSize(700, 500);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         cmbDoctor = new JComboBox<>();
         cmbStatus = new JComboBox<>(new String[] {"Appointment Scheduled", "Completed"});
-
+        
         // Panel for input fields
         JPanel inputPanel = new JPanel(new GridLayout(8, 2, 5, 5));
 
-
-  inputPanel.add(new JLabel("Count :"));
-    txtCount = new JTextField();
-    txtCount.setEditable(false);
-    inputPanel.add(txtCount);
 
     inputPanel.add(new JLabel("ID:"));
     txtId = new JTextField();
@@ -45,17 +40,21 @@ public class PatientStatusGUI extends JFrame {
 
     inputPanel.add(new JLabel("Name:"));
     txtName = new JTextField();
+    txtName.setEditable(false);
     inputPanel.add(txtName);
 
     inputPanel.add(new JLabel("Age:"));
     txtAge = new JTextField();
+    txtAge.setEditable(false);
     inputPanel.add(txtAge);
 
     inputPanel.add(new JLabel("Diseases:"));
     txtDiseases = new JTextField();
+    txtDiseases.setEditable(false);
     inputPanel.add(txtDiseases);
 
     inputPanel.add(new JLabel("Assigned Doctor:"));
+    cmbDoctor.setEditable(false); // Make it non-editable
     inputPanel.add(cmbDoctor); 
 
     inputPanel.add(new JLabel("Status:"));
@@ -65,27 +64,42 @@ public class PatientStatusGUI extends JFrame {
     txtSearchId = new JTextField();
     inputPanel.add(txtSearchId);
 
+        // Add a menu item for "Sign Out"
+        // Add Sign Out menu to the menu bar on the right
+        JMenuBar menuBar = new JMenuBar();
+        JMenu signOutMenu = new JMenu("Sign Out");
+        signOutMenu.addMenuListener(new javax.swing.event.MenuListener() {
+        @Override
+        public void menuSelected(javax.swing.event.MenuEvent e) {
+            dispose();
+            new SigninGUI();
+            }
+            @Override
+            public void menuDeselected(javax.swing.event.MenuEvent e) {}
+            @Override
+            public void menuCanceled(javax.swing.event.MenuEvent e) {}
+        });
+        menuBar.add(Box.createHorizontalGlue());
+        menuBar.add(signOutMenu);
+        setJMenuBar(menuBar);// Add the input panel to the frame 
+
+
 
 
         // Buttons Panel
         JPanel buttonPanel = new JPanel(new GridLayout(1, 6, 5, 5));
-
-        JButton btnAdd = new JButton("Add");
         JButton btnUpdate = new JButton("Update");
-        JButton btnDelete = new JButton("Delete");
         JButton btnSearch = new JButton("Search");
         JButton btnRefresh = new JButton("Refresh");
-        JButton btnBack = new JButton("Back to Main Menu");
 
-        buttonPanel.add(btnAdd);
+
         buttonPanel.add(btnUpdate);
-        buttonPanel.add(btnDelete);
         buttonPanel.add(btnSearch);
         buttonPanel.add(btnRefresh);
-        buttonPanel.add(btnBack);
+
 
         // Table
-        tableModel = new DefaultTableModel(new String[]{"Count", "ID", "Name", "Age", "Diseases", "Doctor", "Status"}, 0) {
+        tableModel = new DefaultTableModel(new String[]{"No.", "ID", "Name", "Age", "Diseases", "Doctor", "Status"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false; // read-only table
@@ -102,13 +116,9 @@ public class PatientStatusGUI extends JFrame {
 
         // Button actions
         btnUpdate.addActionListener(e -> updatePatient());
-        btnDelete.addActionListener(e -> deletePatient());
         btnSearch.addActionListener(e -> searchPatient());
         btnRefresh.addActionListener(e -> loadTableData());
-        btnBack.addActionListener(e -> {
-            dispose();
-            new AdminMainMenu();
-        });
+
 
         // When table row clicked, populate input fields
         table.addMouseListener(new MouseAdapter() {
@@ -116,7 +126,6 @@ public class PatientStatusGUI extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 int selectedRow = table.getSelectedRow();
                 if (selectedRow >= 0) {
-                    txtCount.setText(tableModel.getValueAt(selectedRow, 0).toString());
                     txtId.setText(tableModel.getValueAt(selectedRow, 1).toString());
                     txtName.setText(tableModel.getValueAt(selectedRow, 2).toString());
                     txtAge.setText(tableModel.getValueAt(selectedRow, 3).toString());
@@ -133,68 +142,31 @@ public class PatientStatusGUI extends JFrame {
         setLocationRelativeTo(null); 
         
     }
-    private int getNextCount() {
-        try {
-            List<Patient> patients = patientManager.getAll();
-            int maxCount = 0;
-            for (Patient p : patients) {
-                if (p.getCount() > maxCount) {
-                    maxCount = p.getCount();
-                }
-            }
-            return maxCount + 1;
-        } catch (IOException ex) {
-            return 1;
-        }
-    }
 
-    private String generateId(int count) {
-        return String.format("P%03d", count); // Example: P001, P012, etc.
-    }
+    
+    public String docName; 
+
     private void loadDoctors() { //LOAD DOCTOR FOR ASSIGNATION
         cmbDoctor.removeAllItems();
         try {
             List<Doctor> doctors = new DoctorManager().getAll(); 
             for (Doctor doc : doctors) {
-                cmbDoctor.addItem(doc.getName());
+                if (doc.getId().equals(this.userId)){
+                    cmbDoctor.addItem(doc.getName());
+                    docName = doc.getName();
+                }
+                
             }
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(this, "Error loading doctors: " + ex.getMessage());
         }
+        
     }
-    private void addPatient() {
-        try {
-            int count = getNextCount();
-            String id = generateId(count);
-            String name = txtName.getText().trim();
-            String ageText = txtAge.getText().trim();
-            String diseases = txtDiseases.getText().trim();
-            String doctor = (String) cmbDoctor.getSelectedItem();
-            String status = (String) cmbStatus.getSelectedItem();
-            
 
-            if (ageText.isEmpty() || name.isEmpty() || diseases.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "age, Name and Diseases cannot be empty.", "Input Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            int age = Integer.parseInt(ageText); //converting to int for passing to arg Patient Constructor
-
-
-            Patient patient = new Patient(count, id, name, age, diseases, doctor, status);
-            patientManager.add(patient);
-            JOptionPane.showMessageDialog(this, "Patient added successfully!");
-            clearFields();
-            loadTableData();
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "Count and Age must be integers.", "Input Error", JOptionPane.ERROR_MESSAGE);
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(this, "Error saving patient: " + ex.getMessage(), "File Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
 
     private void updatePatient() {
         try {
-            int count = Integer.parseInt(txtCount.getText().trim());
+           
             String id = txtId.getText().trim();
             String name = txtName.getText().trim();
             int age = Integer.parseInt(txtAge.getText().trim());
@@ -207,32 +179,16 @@ public class PatientStatusGUI extends JFrame {
                 return;
             }
 
-            Patient patient = new Patient(count, id, name, age, diseases, doctor, status);
+            Patient patient = new Patient(id, name, age, diseases, doctor, status);
 
             patientManager.update(patient);
             JOptionPane.showMessageDialog(this, "Patient updated successfully!");
             clearFields();
             loadTableData();
         } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "Count and Age must be integers.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Age must be integers.", "Input Error", JOptionPane.ERROR_MESSAGE);
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(this, "Error updating patient: " + ex.getMessage(), "File Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    private void deletePatient() {
-        String id = txtId.getText().trim();
-        if (id.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please enter an ID to delete.", "Input Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        try {
-            patientManager.delete(id);
-            JOptionPane.showMessageDialog(this, "Patient deleted successfully!");
-            clearFields();
-            loadTableData();
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(this, "Error deleting patient: " + ex.getMessage(), "File Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -248,7 +204,6 @@ public class PatientStatusGUI extends JFrame {
                 JOptionPane.showMessageDialog(this, "Patient not found.", "Search Result", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 // populate fields
-                txtCount.setText(String.valueOf(patient.getCount()));
                 txtId.setText(patient.getId());
                 txtName.setText(patient.getName());
                 txtAge.setText(String.valueOf(patient.getAge()));
@@ -264,9 +219,9 @@ public class PatientStatusGUI extends JFrame {
             List<Patient> patients = patientManager.getAll();
             tableModel.setRowCount(0); // clear table
             for (Patient p : patients) {
-                if (p.getAssignedDoctor() != null && p.getAssignedDoctor().equals(userId)) {
+                if (p.getAssignedDoctor().equals(docName)) {
                     tableModel.addRow(new Object[]{
-                        p.getCount(), p.getId(), p.getName(), p.getAge(), p.getDiseases(), p.getAssignedDoctor(), p.getStatus()
+                        tableModel.getRowCount() +1, p.getId(), p.getName(), p.getAge(), p.getDiseases(), p.getAssignedDoctor(), p.getStatus()
                     });
                 }
             }
@@ -276,7 +231,6 @@ public class PatientStatusGUI extends JFrame {
     }
 
     private void clearFields() {
-        txtCount.setText("");
         txtId.setText("");
         txtName.setText("");
         txtAge.setText("");
@@ -286,10 +240,7 @@ public class PatientStatusGUI extends JFrame {
     cmbDoctor.setSelectedIndex(0); // or any default index
 }
     }
-
-    public String getID(String currentid) {
-        return currentid;
-    }   
+ 
 
     public static void main(String[] args) {
         // Removed no-arg PatientStatusGUI() usage

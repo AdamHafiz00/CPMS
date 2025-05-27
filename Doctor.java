@@ -3,8 +3,8 @@
 public class Doctor extends Person {
     private String specialist;
     private String password;
-    public Doctor(int count, String id, String name, int age, String specialist,String password) {
-        super(count, id, name, age);
+    public Doctor(String id, String name, int age, String specialist,String password) {
+        super(id, name, age);
         this.password = password;
         this.specialist = specialist;
     }
@@ -23,7 +23,7 @@ public class Doctor extends Person {
     }
   @Override
       public String toString() {
-        return getCount() + "," + getId() + "," + getName() + "," + getAge() + "," + getSpecialist() + "," + getPassword();
+        return getId() + "," + getName() + "," + getAge() + "," + getSpecialist() + "," + getPassword();
     }
 
 }

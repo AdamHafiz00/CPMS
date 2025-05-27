@@ -13,7 +13,7 @@ import javax.swing.table.DefaultTableModel;
 
 public class AdminGUI extends JFrame{
     
-    private JTextField  txtCount,txtId,txtName,txtAge,txtSearchId;
+    private JTextField  txtId,txtName,txtAge,txtSearchId;
     private JPasswordField txtPassword;
     private JTable table;
     private DefaultTableModel tableModel;
@@ -38,9 +38,6 @@ public class AdminGUI extends JFrame{
         gbc.insets = new Insets(5, 5, 5, 5);                          // Setting insets for the grid bag constraints
         gbc.fill = GridBagConstraints.HORIZONTAL;                                           // Allowing components to fill the horizontal space             
 
-        JLabel lblCount = new JLabel("Count:");
-        txtCount = new JTextField(15);                                              // Creating a text field for count and setting its width
-        txtCount.setEditable(false);
 
         JLabel lblId = new JLabel("ID:");
         txtId = new JTextField(15);
@@ -59,9 +56,7 @@ public class AdminGUI extends JFrame{
         txtSearchId = new JTextField(15);
 
         int row = 0;                                                                        // Initializing row for grid bag layout
-        gbc.gridx = 0; gbc.gridy = row; inputPanel.add(lblCount, gbc);                      // Adding the count label to the input panel
-        gbc.gridx = 1; inputPanel.add(txtCount, gbc);                                       // Adding the count text field to the input panel  
-        row++;                                                                              // Incrementing the row for the next component                              
+                                                                            // Incrementing the row for the next component                              
         row++;
         gbc.gridx = 0; gbc.gridy = row; inputPanel.add(lblId, gbc);
         gbc.gridx = 1; inputPanel.add(txtId, gbc);
@@ -93,7 +88,7 @@ public class AdminGUI extends JFrame{
         buttonPanel.add(btnRefresh);
         buttonPanel.add(btnBack);
 
-        tableModel = new DefaultTableModel(new String[]{"Count", "ID", "Name", "Age","Password"}, 0) { // Creating a table model with column names
+        tableModel = new DefaultTableModel(new String[]{"No.", "ID", "Name", "Age","Password"}, 0) { // Creating a table model with column names
             public boolean isCellEditable(int row, int column) {                                                   // Making the table cells non-editable
                 return false;
             }
@@ -121,7 +116,7 @@ public class AdminGUI extends JFrame{
             public void mouseClicked(MouseEvent e) {                                    // When a row is clicked
                 int row = table.getSelectedRow();                                       // Get the selected row index   
                 if (row >= 0) {                                                         // If a valid row is selected   
-                    txtCount.setText(tableModel.getValueAt(row, 0).toString());     // Populate the text fields with the selected row data
+                        // Populate the text fields with the selected row data
                     txtId.setText(tableModel.getValueAt(row, 1).toString());        
                     txtName.setText(tableModel.getValueAt(row, 2).toString());
                     txtAge.setText(tableModel.getValueAt(row, 3).toString());
@@ -149,31 +144,22 @@ public class AdminGUI extends JFrame{
 
     }
 
-
-
-    private int getNextCount() {                                    // Method to get the next count for the admin
-            try {
-                List<Admin> admins = adminManager.getAll();         // Getting all admins from the file using the getAll method from AdminManager class
-                int maxCount = 0;                                   // Initializing maxCount to 0  
-                for (Admin d : admins) {                            // Iterating through the list of admins 
-                    if (d.getCount() > maxCount) {                  // If the current admin's count is greater than maxCount
-                        maxCount = d.getCount();                    // Update maxCount to the current admin's count
-                    }
-                }
-                return maxCount + 1;                                // Return the next count by adding 1 to the maxCount
-            } catch (IOException ex) {
-                return 1; // start from 1 if error or empty list
-            }
+    private String generateId() {
+        // Generate a unique ID for the patient
+        try {
+            int nextId = adminManager.getAll().size() + 1;
+            return String.format("A%03d", nextId);
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Error generating patient ID: " + ex.getMessage(), "File Error", JOptionPane.ERROR_MESSAGE);
+            return "A0";
         }
-
-    private String generateId(int count) {
-        return String.format("A%03d", count); // e.g., A001, A012, A123
     }
+
+    
 
     private void addAdmin() {
         try {
-            int count = getNextCount(); //COLLECTING DATA FROM THE TEXT FIELDS
-            String id = generateId(count);
+            String id = generateId();                                                // Generating a unique ID for the admin
             String name = txtName.getText().trim();
             String ageText = txtAge.getText().trim();
             String password = new String(txtPassword.getPassword()).trim();
@@ -184,7 +170,7 @@ public class AdminGUI extends JFrame{
             }
 
             int age = Integer.parseInt(ageText);                                    // converting to int for passing to arg Admin Constructor
-            Admin admin = new Admin(count, id, name, age, password);      // Creating Admin object and passing the data to the constructor and assigning to the admin variable
+            Admin admin = new Admin( id, name, age, password);      // Creating Admin object and passing the data to the constructor and assigning to the admin variable
             adminManager.add(admin);                                                // Adding the admin object to the file using the add method from AdminManager class
 
             JOptionPane.showMessageDialog(this, "Admin added successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
@@ -196,13 +182,13 @@ public class AdminGUI extends JFrame{
     }
    private void updateAdmin() {
         try {
-            int count = Integer.parseInt(txtCount.getText().trim());            // Collecting data from the text fields
+                                                        // Collecting data from the text fields
             String id = txtId.getText().trim();                              
             String name = txtName.getText().trim();
             int age = Integer.parseInt(txtAge.getText().trim());
             String password = new String(txtPassword.getPassword()).trim();
 
-            Admin admin = new Admin(count, id, name, age,password);
+            Admin admin = new Admin(id, name, age,password);
             adminManager.update(admin);
             JOptionPane.showMessageDialog(this, "Admin updated.");
             clearFields();                                                      // Clearing the text fields after updating
@@ -234,7 +220,6 @@ public class AdminGUI extends JFrame{
             if (admin == null) {                                                    // If admin is not found, show a message
                 JOptionPane.showMessageDialog(this, "Admin not found.");
             } else {                                                                // If admin is found, populate the text fields with the admin data
-                txtCount.setText(String.valueOf(admin.getCount())); 
                 txtId.setText(admin.getId());
                 txtName.setText(admin.getName());
                 txtAge.setText(String.valueOf(admin.getAge()));
@@ -251,7 +236,7 @@ public class AdminGUI extends JFrame{
             tableModel.setRowCount(0);                                     // Clearing the table model before adding new data   
             for (Admin d : admin) {                                                 // Iterating through the list of admins
                 tableModel.addRow(new Object[]{                                     // Adding a new row to the table model with the admin data
-                        d.getCount(), d.getId(), d.getName(), d.getAge(), d.getPassword()
+                        tableModel.getRowCount(), d.getId(), d.getName(), d.getAge(), d.getPassword()
                 });
             }
         } catch (IOException ex) {
@@ -260,7 +245,7 @@ public class AdminGUI extends JFrame{
     }
 
     private void clearFields() {
-        txtCount.setText("");
+       
         txtId.setText("");
         txtName.setText("");
         txtAge.setText("");

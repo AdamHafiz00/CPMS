@@ -45,9 +45,9 @@ class SigninGUI extends javax.swing.JFrame {
                     String line;                                                                                                    // Initialize a variable to hold each line read from the file
                     while ((line = br.readLine()) != null) {                                                                        // Read each line until the end of the file
                         String[] parts = line.split(",");                                                                     // Split the line into parts using comma as a delimiter
-                        if (parts.length == 6) {                                                                                    // Check if the line has the expected number of parts                   
-                            String fileUserid = parts[4];                                                                         // Get the username from the file
-                            String filePassword = parts[5];                                                                         // Get the password from the file                
+                        if (parts.length == 4) {                                                                                    // Check if the line has the expected number of parts                   
+                            String fileUserid = parts[0];                                                                         // Get the username from the file
+                            String filePassword = parts[3];                                                                         // Get the password from the file                
                             if (UserId.equals(fileUserid) && password.equals(filePassword)) {                                   // Compare the input username and password with the file data
                                 authenticated = true; 
                                 usercode = "Admin";                                                                              // If they match, set authenticated to true                    
@@ -58,9 +58,9 @@ class SigninGUI extends javax.swing.JFrame {
                 try (java.io.BufferedReader br1 = new java.io.BufferedReader(new java.io.FileReader("doctor.txt"))) {      // Read the doctor data from the file
                     while ((line = br1.readLine()) != null) {                                                                       // Read each line until the end of the file
                         String[] parts = line.split(",");                                                                     // Split the line into parts using comma as a delimiter
-                        if (parts.length == 6) {                                                                                    // Check if the line has the expected number of parts                   
-                            String fileUserid = parts[1];                                                                         // Get the username from the file
-                            String filePassword = parts[5];                                                                         // Get the password from the file                
+                        if (parts.length == 5) {                                                                                    // Check if the line has the expected number of parts                   
+                            String fileUserid = parts[0];                                                                         // Get the username from the file
+                            String filePassword = parts[4];                                                                         // Get the password from the file                
                             if (UserId.equals(fileUserid) && password.equals(filePassword)) {                                   // Compare the input username and password with the file data
                                 authenticated = true;                                                                               // If they match, set authenticated to true                    
                                  usercode = "Doctor";

@@ -3,8 +3,8 @@ public class Patient extends Person {
     private String assignedDoctor;
     private String status;
 
-    public Patient(int count, String id, String name, int age, String diseases,String assignedDoctor,String status) {
-        super(count, id, name, age);
+    public Patient(String id, String name, int age, String diseases,String assignedDoctor,String status) {
+        super(id, name, age);
         this.diseases = diseases;
         this.assignedDoctor = assignedDoctor;
         this.status = status;
@@ -36,6 +36,6 @@ public class Patient extends Person {
 
     @Override
     public String toString() {
-        return getCount() + "," + getId() + "," + getName() + "," + getAge() + "," + getDiseases() + "," + getAssignedDoctor() + "," + getStatus();
+        return getId() + "," + getName() + "," + getAge() + "," + getDiseases() + "," + getAssignedDoctor() + "," + getStatus();
     }
 }

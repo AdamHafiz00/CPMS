@@ -6,7 +6,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 public class PatientGUI extends JFrame {
-    private JTextField txtCount, txtId, txtName, txtAge, txtDiseases, txtSearchId;
+    private JTextField txtId, txtName, txtAge, txtDiseases, txtSearchId;
     
     private JTable table;
     private DefaultTableModel tableModel;
@@ -31,10 +31,9 @@ public class PatientGUI extends JFrame {
         JPanel inputPanel = new JPanel(new GridLayout(8, 2, 5, 5));
 
 
-  inputPanel.add(new JLabel("Count :"));
-    txtCount = new JTextField();
-    txtCount.setEditable(false);
-    inputPanel.add(txtCount);
+
+
+
 
     inputPanel.add(new JLabel("ID:"));
     txtId = new JTextField();
@@ -83,7 +82,7 @@ public class PatientGUI extends JFrame {
         buttonPanel.add(btnBack);
 
         // Table
-        tableModel = new DefaultTableModel(new String[]{"Count", "ID", "Name", "Age", "Diseases", "Doctor", "Status"}, 0) {
+        tableModel = new DefaultTableModel(new String[]{"No.", "ID", "Name", "Age", "Diseases", "Doctor", "Status"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false; // read-only table
@@ -115,7 +114,7 @@ public class PatientGUI extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 int selectedRow = table.getSelectedRow();
                 if (selectedRow >= 0) {
-                    txtCount.setText(tableModel.getValueAt(selectedRow, 0).toString());
+                   // wait
                     txtId.setText(tableModel.getValueAt(selectedRow, 1).toString());
                     txtName.setText(tableModel.getValueAt(selectedRow, 2).toString());
                     txtAge.setText(tableModel.getValueAt(selectedRow, 3).toString());
@@ -132,24 +131,8 @@ public class PatientGUI extends JFrame {
         setLocationRelativeTo(null); 
         
     }
-    private int getNextCount() {
-        try {
-            List<Patient> patients = patientManager.getAll();
-            int maxCount = 0;
-            for (Patient p : patients) {
-                if (p.getCount() > maxCount) {
-                    maxCount = p.getCount();
-                }
-            }
-            return maxCount + 1;
-        } catch (IOException ex) {
-            return 1;
-        }
-    }
 
-    private String generateId(int count) {
-        return String.format("P%03d", count); // Example: P001, P012, etc.
-    }
+
     private void loadDoctors() { //LOAD DOCTOR FOR ASSIGNATION
         cmbDoctor.removeAllItems();
         try {
@@ -161,10 +144,20 @@ public class PatientGUI extends JFrame {
             JOptionPane.showMessageDialog(this, "Error loading doctors: " + ex.getMessage());
         }
     }
+
+    private String generateId() {
+        // Generate a unique ID for the patient
+              try {
+            int nextId = patientManager.getAll().size() + 1;
+            return String.format("A%03d", nextId);
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Error generating patient ID: " + ex.getMessage(), "File Error", JOptionPane.ERROR_MESSAGE);
+            return "A0";
+        }
+    }
     private void addPatient() {
         try {
-            int count = getNextCount();
-            String id = generateId(count);
+            String id = generateId(); // Generate a new ID
             String name = txtName.getText().trim();
             String ageText = txtAge.getText().trim();
             String diseases = txtDiseases.getText().trim();
@@ -177,9 +170,7 @@ public class PatientGUI extends JFrame {
                 return;
             }
             int age = Integer.parseInt(ageText); //converting to int for passing to arg Patient Constructor
-
-
-            Patient patient = new Patient(count, id, name, age, diseases, doctor, status);
+            Patient patient = new Patient( id, name, age, diseases, doctor, status);
             patientManager.add(patient);
             JOptionPane.showMessageDialog(this, "Patient added successfully!");
             clearFields();
@@ -193,7 +184,6 @@ public class PatientGUI extends JFrame {
 
     private void updatePatient() {
         try {
-            int count = Integer.parseInt(txtCount.getText().trim());
             String id = txtId.getText().trim();
             String name = txtName.getText().trim();
             int age = Integer.parseInt(txtAge.getText().trim());
@@ -206,7 +196,7 @@ public class PatientGUI extends JFrame {
                 return;
             }
 
-            Patient patient = new Patient(count, id, name, age, diseases, doctor, status);
+            Patient patient = new Patient(id, name, age, diseases, doctor, status);
 
             patientManager.update(patient);
             JOptionPane.showMessageDialog(this, "Patient updated successfully!");
@@ -247,7 +237,6 @@ public class PatientGUI extends JFrame {
                 JOptionPane.showMessageDialog(this, "Patient not found.", "Search Result", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 // populate fields
-                txtCount.setText(String.valueOf(patient.getCount()));
                 txtId.setText(patient.getId());
                 txtName.setText(patient.getName());
                 txtAge.setText(String.valueOf(patient.getAge()));
@@ -259,12 +248,12 @@ public class PatientGUI extends JFrame {
     }
 
     private void loadTableData() {
-        try {
+               try {
             List<Patient> patients = patientManager.getAll();
             tableModel.setRowCount(0); // clear table
             for (Patient p : patients) {
                 tableModel.addRow(new Object[]{
-                        p.getCount(), p.getId(), p.getName(), p.getAge(), p.getDiseases(), p.getAssignedDoctor(),p.getStatus()
+                        tableModel.getRowCount() + 1, p.getId(), p.getName(), p.getAge(), p.getDiseases(), p.getAssignedDoctor(), p.getStatus()
                 });
             }
         } catch (IOException ex) {
@@ -273,7 +262,7 @@ public class PatientGUI extends JFrame {
     }
 
     private void clearFields() {
-        txtCount.setText("");
+
         txtId.setText("");
         txtName.setText("");
         txtAge.setText("");

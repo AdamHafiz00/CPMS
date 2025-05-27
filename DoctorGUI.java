@@ -95,7 +95,7 @@ public class DoctorGUI extends JFrame {
         buttonPanel.add(btnRefresh);
         buttonPanel.add(btnBack);
 
-        tableModel = new DefaultTableModel(new String[]{"Count", "ID", "Name", "Age", "Specialist","Password"}, 0) {
+        tableModel = new DefaultTableModel(new String[]{"No.", "ID", "Name", "Age", "Specialist","Password"}, 0) {
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
@@ -135,30 +135,22 @@ public class DoctorGUI extends JFrame {
         setResizable(true);      // Allow user to resize
         setLocationRelativeTo(null); 
     }
-    private int getNextCount() {
+
+    private String generateId() {
+        // Generate a unique ID for the patient
         try {
-            List<Doctor> doctors = doctorManager.getAll();
-            int maxCount = 0;
-            for (Doctor d : doctors) {
-                if (d.getCount() > maxCount) {
-                    maxCount = d.getCount();
-                }
-            }
-            return maxCount + 1;
+            int nextId = doctorManager.getAll().size() + 1;
+            return String.format("A%03d", nextId);
         } catch (IOException ex) {
-            return 1; // start from 1 if error or empty list
+            JOptionPane.showMessageDialog(this, "Error generating patient ID: " + ex.getMessage(), "File Error", JOptionPane.ERROR_MESSAGE);
+            return "A0";
         }
     }
 
-    private String generateId(int count) {
-        return String.format("D%03d", count); // e.g., D001, D012, D123
-    }
-
-
     private void addDoctor() {
         try {
-            int count = getNextCount();
-            String id = generateId(count);  
+
+            String id = generateId();  
             String name = txtName.getText().trim();
             String ageText = txtAge.getText().trim();
             String specialist = (String) cmbSpecialist.getSelectedItem();
@@ -170,7 +162,7 @@ public class DoctorGUI extends JFrame {
             }
             int age = Integer.parseInt(ageText); //converting to int for passing to arg Doctor Constructor
 
-            Doctor doctor = new Doctor(count, id, name, age, specialist,password);
+            Doctor doctor = new Doctor( id, name, age, specialist,password);
             doctorManager.add(doctor);
             JOptionPane.showMessageDialog(this, "Doctor added.");
             clearFields();
@@ -189,7 +181,7 @@ public class DoctorGUI extends JFrame {
             String specialist = (String) cmbSpecialist.getSelectedItem();
             String password = new String(txtPassword.getPassword()).trim(); // Get password from JPasswordField
 
-            Doctor doctor = new Doctor(count, id, name, age, specialist,password);
+            Doctor doctor = new Doctor(id, name, age, specialist,password);
             doctorManager.update(doctor);
             JOptionPane.showMessageDialog(this, "Doctor updated.");
             clearFields();
@@ -222,7 +214,6 @@ public class DoctorGUI extends JFrame {
             if (doctor == null) {
                 JOptionPane.showMessageDialog(this, "Doctor not found.");
             } else {
-                txtCount.setText(String.valueOf(doctor.getCount()));
                 txtId.setText(doctor.getId());
                 txtName.setText(doctor.getName());
                 txtAge.setText(String.valueOf(doctor.getAge()));
@@ -239,7 +230,7 @@ public class DoctorGUI extends JFrame {
             tableModel.setRowCount(0);
             for (Doctor d : doctors) {
                 tableModel.addRow(new Object[]{
-                        d.getCount(), d.getId(), d.getName(), d.getAge(), d.getSpecialist(), d.getPassword()
+                        tableModel.getRowCount() + 1, d.getId(), d.getName(), d.getAge(), d.getSpecialist(), d.getPassword()
                 });
             }
         } catch (IOException ex) {

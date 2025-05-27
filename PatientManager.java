@@ -62,15 +62,14 @@ public class PatientManager implements PersonOperations<Patient> {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(",");
-                if (parts.length == 7) {
-                    int count = Integer.parseInt(parts[0]);
-                    String id = parts[1];
-                    String name = parts[2];
-                    int age = Integer.parseInt(parts[3]);
-                    String diseases = parts[4];
-                    String assignedDoctor = parts[5];
-                    String status = parts[6];
-                    patients.add(new Patient(count, id, name, age, diseases,assignedDoctor,status));
+                if (parts.length == 6) {
+                    String id = parts[0];
+                    String name = parts[1];
+                    int age = Integer.parseInt(parts[2]);
+                    String diseases = parts[3];
+                    String assignedDoctor = parts[4];
+                    String status = parts[5];
+                    patients.add(new Patient(id, name, age, diseases,assignedDoctor,status));
                 }
             }
         }
