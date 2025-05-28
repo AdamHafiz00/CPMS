@@ -288,7 +288,5 @@ public class PatientGUI extends JFrame {
 }
     }
 
-    public static void main(String[] args) {
-      
-}
+
 }

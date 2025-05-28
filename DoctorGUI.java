@@ -252,8 +252,4 @@ public class DoctorGUI extends JFrame {
         txtPassword.setText(""); 
     }
 
-    public static void main(String[] args) {
-
-       
-    }
 }

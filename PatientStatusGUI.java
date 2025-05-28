@@ -242,7 +242,4 @@ public class PatientStatusGUI extends JFrame {
     }
  
 
-    public static void main(String[] args) {
-        // Removed no-arg PatientStatusGUI() usage
-    }
 }
