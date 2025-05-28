@@ -50,7 +50,6 @@ public class PatientStatusGUI extends JFrame {
 
     inputPanel.add(new JLabel("Diseases:"));
     txtDiseases = new JTextField();
-    txtDiseases.setEditable(false);
     inputPanel.add(txtDiseases);
 
     inputPanel.add(new JLabel("Assigned Doctor:"));
@@ -117,7 +116,7 @@ public class PatientStatusGUI extends JFrame {
         // Button actions
         btnUpdate.addActionListener(e -> updatePatient());
         btnSearch.addActionListener(e -> searchPatient());
-        btnRefresh.addActionListener(e -> loadTableData());
+        btnRefresh.addActionListener(e -> loadTableData());loadTableData();
 
 
         // When table row clicked, populate input fields

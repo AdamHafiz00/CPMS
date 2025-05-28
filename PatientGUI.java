@@ -10,7 +10,7 @@ public class PatientGUI extends JFrame {
     
     private JTable table;
     private DefaultTableModel tableModel;
-    private PatientManager patientManager;
+    private PatientManager patientManager; 
     private JComboBox<String> cmbDoctor;
     private JComboBox<String> cmbStatus;
     private String UserId; // Store the level as a field
@@ -105,7 +105,8 @@ public class PatientGUI extends JFrame {
         btnUpdate.addActionListener(e -> updatePatient());
         btnDelete.addActionListener(e -> deletePatient());
         btnSearch.addActionListener(e -> searchPatient());
-        btnRefresh.addActionListener(e -> loadTableData());
+        btnRefresh.addActionListener(e -> {clearFields();loadTableData();     // Reload the table data
+});
         btnBack.addActionListener(e -> {
             dispose();
             new AdminMainMenu(this.UserId);
@@ -256,6 +257,8 @@ public class PatientGUI extends JFrame {
                 txtName.setText(patient.getName());
                 txtAge.setText(String.valueOf(patient.getAge()));
                 txtDiseases.setText(patient.getDiseases());
+                cmbDoctor.setSelectedItem(patient.getAssignedDoctor());
+                cmbStatus.setSelectedItem(patient.getStatus());
             }
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(this, "Error searching patient: " + ex.getMessage(), "File Error", JOptionPane.ERROR_MESSAGE);

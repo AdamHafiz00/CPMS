@@ -109,7 +109,11 @@ public class AdminGUI extends JFrame{
         btnUpdate.addActionListener(e -> updateAdmin());                                // Adding action listener for the Update button to call updateAdmin method
         btnDelete.addActionListener(e -> deleteAdmin());                                // Adding action listener for the Delete button to call deleteAdmin method                  
         btnSearch.addActionListener(e -> searchAdmin());                                // Adding action listener for the Search button to call searchAdmin method
-        btnRefresh.addActionListener(e -> loadTableData());                             // Adding action listener for the Refresh button to call loadTableData method
+        btnRefresh.addActionListener(e -> {
+            loadTableData();
+            clearFields();
+});
+                             // Adding action listener for the Refresh button to call loadTableData method
         btnBack.addActionListener(e -> {
             dispose();                                                                  // Dispose of the current window
             new AdminMainMenu(this.UserId);                                                 // Open the AdminMainMenu with a String argument

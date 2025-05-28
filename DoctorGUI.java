@@ -106,7 +106,10 @@ public class DoctorGUI extends JFrame {
         btnUpdate.addActionListener(e -> updateDoctor());
         btnDelete.addActionListener(e -> deleteDoctor());
         btnSearch.addActionListener(e -> searchDoctor());
-        btnRefresh.addActionListener(e -> loadTableData());
+        btnRefresh.addActionListener(e -> {
+            clearFields();
+            loadTableData();
+        });
         btnBack.addActionListener(e -> {
             dispose();
             new AdminMainMenu(this.UserId);
