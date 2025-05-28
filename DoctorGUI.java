@@ -7,7 +7,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
 public class DoctorGUI extends JFrame {
-    private JTextField txtCount, txtId, txtName, txtAge, txtSearchId;
+    private JTextField txtId, txtName, txtAge, txtSearchId;
     private JPasswordField txtPassword;
     private JComboBox<String> cmbSpecialist;
     private JTable table;
@@ -34,10 +34,6 @@ public class DoctorGUI extends JFrame {
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        JLabel lblCount = new JLabel("Count:");
-        txtCount = new JTextField();
-        txtCount.setEditable(false);
-
         JLabel lblId = new JLabel("ID:");
         txtId = new JTextField();
         txtId.setEditable(false);
@@ -60,9 +56,6 @@ public class DoctorGUI extends JFrame {
         txtSearchId = new JTextField();
 
         int row = 0;
-        gbc.gridx = 0; gbc.gridy = row; inputPanel.add(lblCount, gbc);
-        gbc.gridx = 1; inputPanel.add(txtCount, gbc);
-        row++;
         gbc.gridx = 0; gbc.gridy = row; inputPanel.add(lblId, gbc);
         gbc.gridx = 1; inputPanel.add(txtId, gbc);
         row++;
@@ -123,7 +116,6 @@ public class DoctorGUI extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 int row = table.getSelectedRow();
                 if (row >= 0) {
-                    txtCount.setText(tableModel.getValueAt(row, 0).toString());
                     txtId.setText(tableModel.getValueAt(row, 1).toString());
                     txtName.setText(tableModel.getValueAt(row, 2).toString());
                     txtAge.setText(tableModel.getValueAt(row, 3).toString());
@@ -252,7 +244,6 @@ public class DoctorGUI extends JFrame {
     }
 
     private void clearFields() {
-        txtCount.setText("");
         txtId.setText("");
         txtName.setText("");
         txtAge.setText("");

@@ -17,7 +17,7 @@ public class AdminGUI extends JFrame{
     private JPasswordField txtPassword;
     private JTable table;
     private DefaultTableModel tableModel;
-    private AdminManager adminManager;
+    private AdminManager adminManager; // Instance of AdminManager to handle admin operations
     private String UserId;
     public AdminGUI(String UserId) {
         this.UserId = UserId; // Assign constructor parameter to field
